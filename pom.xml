@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.1.1.RELEASE</version>
+    <relativePath />
+  </parent>
+
   <groupId>car-share</groupId>
   <artifactId>car-share</artifactId>
   <packaging>pom</packaging>
@@ -11,39 +18,33 @@
 
   <modules>
     <module>car-share-core</module>
+    <module>car-share-frontend</module>
   </modules>
-
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.1.RELEASE</version>
-  </parent>
-
-  <dependencies>
-    <dependency>
-      <groupId>car-share</groupId>
-      <artifactId>car-share-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <version>2.1.1.RELEASE</version>
-    </dependency>
-  </dependencies>
 
   <properties>
     <java.version>1.8</java.version>
-    <start-class>carshare</start-class> <!-- podany package w ktorym jest klasa ktora odpowiada za start aplikacji, bez tego przy buildzie lecial błąd (prawdopodobnie dlatego ze zostal dodany modul core) -->
+    <lombok.version>1.18.4</lombok.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>2.1.1.RELEASE</version>
-      </plugin>
-    </plugins>
-  </build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>car-share</groupId>
+        <artifactId>car-share-core</artifactId>
+        <version>>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>car-share</groupId>
+        <artifactId>car-share-frontend</artifactId>
+        <version>>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
