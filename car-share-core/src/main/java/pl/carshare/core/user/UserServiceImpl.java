@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  **/
 @Service("userService")
 @Transactional
-public class UserServiceImpl implements UserService
+class UserServiceImpl implements UserService
 {
   @Autowired
   private SessionFactory sessionFactory;
