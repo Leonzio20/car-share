@@ -6,7 +6,12 @@
 
   <groupId>car-share</groupId>
   <artifactId>car-share</artifactId>
+  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+
+  <modules>
+    <module>car-share-core</module>
+  </modules>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -16,6 +21,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>car-share</groupId>
+      <artifactId>car-share-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
       <version>2.1.1.RELEASE</version>
@@ -24,6 +34,7 @@
 
   <properties>
     <java.version>1.8</java.version>
+    <start-class>carshare</start-class> <!-- podany package w ktorym jest klasa ktora odpowiada za start aplikacji, bez tego przy buildzie lecial błąd (prawdopodobnie dlatego ze zostal dodany modul core) -->
   </properties>
 
   <build>
