@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "user", schema = "public")
+@Table(schema = "public", name = "user")
 public class User
 {
   @Id
@@ -18,8 +18,8 @@ public class User
   @GeneratedValue(generator = "user_id_seq_gen", strategy = GenerationType.SEQUENCE)
   private Long id;
 
-  @Column(name = "login", unique = true, updatable = false, nullable = false)
-  private String login;
+  @Column(name = "user_name", unique = true, updatable = false, nullable = false)
+  private String userName;
 
   @Column(name = "password", nullable = false)
   private String password;

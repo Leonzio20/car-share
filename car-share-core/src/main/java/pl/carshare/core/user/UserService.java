@@ -5,5 +5,5 @@ package pl.carshare.core.user;
  **/
 public interface UserService
 {
-  void testConnection();
+  User create(UserCreateRequest request);
 }
