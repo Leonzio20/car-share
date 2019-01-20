@@ -6,4 +6,6 @@ package pl.carshare.core.user;
 public interface UserService
 {
   User create(UserCreateRequest request);
+
+  boolean login(UserLoginRequest request);
 }

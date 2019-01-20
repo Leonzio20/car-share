@@ -1,14 +1,15 @@
 package pl.carshare.core.user;
 
 import javax.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * @author radziejoski
  **/
-@Setter
 @Getter
+@Setter(AccessLevel.PACKAGE)
 @Entity
 @Table(schema = "public", name = "user")
 public class User

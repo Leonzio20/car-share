@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  **/
 @Service("userService")
 @Transactional
-class UserServiceImpl implements UserService
+public class UserServiceImpl implements UserService
 {
   @Autowired
   private UserRepository userRepository;
@@ -17,7 +17,13 @@ class UserServiceImpl implements UserService
   @Override
   public User create(UserCreateRequest request)
   {
-    User user = request.create();
+    User user = request.create(userRepository::findByUserName);
     return userRepository.save(user);
+  }
+
+  @Override
+  public boolean login(UserLoginRequest request)
+  {
+    return request.login(userRepository::findByUserNameAndPassword);
   }
 }
