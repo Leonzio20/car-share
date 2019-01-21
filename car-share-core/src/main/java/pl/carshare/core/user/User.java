@@ -2,6 +2,7 @@ package pl.carshare.core.user;
 
 import javax.persistence.*;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @Entity
+@EqualsAndHashCode
 @Table(schema = "public", name = "user")
 public class User
 {

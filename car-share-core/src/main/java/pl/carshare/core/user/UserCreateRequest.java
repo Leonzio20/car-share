@@ -17,8 +17,7 @@ public class UserCreateRequest
 
   User create(UserByLoginFinder userByLoginFinder) throws UserWithLoginAlreadyExistsException, PasswordMismatchException
   {
-    if (userByLoginFinder.find(userName)
-      .isPresent())
+    if (userByLoginFinder.find(userName).isPresent())
     {
       throw UserWithLoginAlreadyExistsException.of(userName);
     }
