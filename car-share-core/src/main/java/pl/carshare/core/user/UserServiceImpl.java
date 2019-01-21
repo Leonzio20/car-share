@@ -15,14 +15,14 @@ public class UserServiceImpl implements UserService
   private UserRepository userRepository;
 
   @Override
-  public User create(UserCreateRequest request)
+  public User create(UserCreateRequest request) throws UserWithLoginAlreadyExistsException, PasswordMismatchException
   {
     User user = request.create(userRepository::findByUserName);
     return userRepository.save(user);
   }
 
   @Override
-  public boolean login(UserLoginRequest request)
+  public boolean login(UserLoginRequest request) throws InvalidUserNameOrPasswordException
   {
     return request.login(userRepository::findByUserNameAndPassword);
   }

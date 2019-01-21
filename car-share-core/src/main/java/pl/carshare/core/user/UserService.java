@@ -5,7 +5,7 @@ package pl.carshare.core.user;
  **/
 public interface UserService
 {
-  User create(UserCreateRequest request);
+  User create(UserCreateRequest request) throws UserWithLoginAlreadyExistsException, PasswordMismatchException;
 
-  boolean login(UserLoginRequest request);
+  boolean login(UserLoginRequest request) throws InvalidUserNameOrPasswordException;
 }
