@@ -1,10 +1,13 @@
 package pl.carshare.core.user;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author leonzio
@@ -24,6 +28,9 @@ class UserLoginRequestTest
 {
   @Mock
   private UserLoginRequest.UserByUserNameAndPasswordFinder userByUserNameAndPasswordFinder;
+
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
   private UserLoginRequest loginRequest;
 
@@ -37,36 +44,44 @@ class UserLoginRequestTest
   void testLoginSuccess()
   {
     String userName = "user";
-    char[] password = new char[]{'p', 'a', 's', 's'};
+    CharSequence password = "pass";
+    String encodedPassword = "encoded";
 
     loginRequest.setUserName(userName);
     loginRequest.setPassword(password);
 
     User user = mock(User.class);
 
-    when(userByUserNameAndPasswordFinder.find(userName, Arrays.toString(password))).thenReturn(
-      Optional.of(user));
+    when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+    when(userByUserNameAndPasswordFinder.find(userName, encodedPassword)).thenReturn(Optional.of(user));
 
-    boolean loginResult = loginRequest.login(userByUserNameAndPasswordFinder);
+    boolean loginResult = loginRequest.login(userByUserNameAndPasswordFinder, passwordEncoder);
 
     assertTrue(loginResult);
+
+    verify(passwordEncoder, times(1)).encode(password);
+    verify(userByUserNameAndPasswordFinder, times(1)).find(userName, encodedPassword);
   }
 
   @Test
   void testLoginFails()
   {
     String userName = "user";
-    char[] password = new char[]{'p', 'a', 's', 's'};
+    CharSequence password = "pass";
+    String encodedPassword = "encoded";
 
     loginRequest.setUserName(userName);
     loginRequest.setPassword(password);
 
-    when(userByUserNameAndPasswordFinder.find(userName, Arrays.toString(password))).thenReturn(
-      Optional.empty());
+    when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
+    when(userByUserNameAndPasswordFinder.find(userName, encodedPassword)).thenReturn(Optional.empty());
 
     Exception exception = assertThrows(InvalidUserNameOrPasswordException.class,
-      () -> loginRequest.login(userByUserNameAndPasswordFinder));
+      () -> loginRequest.login(userByUserNameAndPasswordFinder, passwordEncoder));
 
     assertEquals("Invalid user name or password", exception.getMessage());
+
+    verify(passwordEncoder, times(1)).encode(password);
+    verify(userByUserNameAndPasswordFinder, times(1)).find(userName, encodedPassword);
   }
 }

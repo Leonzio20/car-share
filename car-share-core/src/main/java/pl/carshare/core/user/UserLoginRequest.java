@@ -1,9 +1,9 @@
 package pl.carshare.core.user;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author leonzio
@@ -12,12 +12,12 @@ import lombok.Setter;
 public class UserLoginRequest
 {
   private String userName;
-  private char[] password;
+  private CharSequence password;
 
-  boolean login(UserByUserNameAndPasswordFinder userByUserNameAndPasswordFinder) throws
+  boolean login(UserByUserNameAndPasswordFinder userByUserNameAndPasswordFinder, PasswordEncoder passwordEncoder) throws
     InvalidUserNameOrPasswordException
   {
-    return userByUserNameAndPasswordFinder.find(userName, Arrays.toString(password))
+    return userByUserNameAndPasswordFinder.find(userName, passwordEncoder.encode(password))
       .map(user -> true)
       .orElseThrow(InvalidUserNameOrPasswordException::new);
   }

@@ -4,9 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author leonzio
@@ -26,6 +28,9 @@ class UserCreateRequestTest
 {
   @Mock
   private UserCreateRequest.UserByLoginFinder userByLoginFinder;
+
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
   private UserCreateRequest createRequest;
 
@@ -39,26 +44,31 @@ class UserCreateRequestTest
   void testCreateSuccess()
   {
     String userName = "userName";
-    char[] password = new char[]{'p', 'a', 's', 's'};
+    CharSequence password = "pass";
+    String encodedPassword = "encoded";
 
     createRequest.setUserName(userName);
     createRequest.setPassword(password);
     createRequest.setRepeatedPassword(password);
 
     when(userByLoginFinder.find(userName)).thenReturn(Optional.empty());
+    when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 
-    User createdUser = createRequest.create(userByLoginFinder);
+    User createdUser = createRequest.create(userByLoginFinder, passwordEncoder);
 
     assertNotNull(createdUser);
     assertEquals(userName, createdUser.getUserName());
-    assertEquals(Arrays.toString(password), createdUser.getPassword());
+    assertEquals(encodedPassword, createdUser.getPassword());
+
+    verify(userByLoginFinder, times(1)).find(userName);
+    verify(passwordEncoder, times(1)).encode(password);
   }
 
   @Test
   void testCreateUserWithLoginExists()
   {
     String userName = "userName";
-    char[] password = new char[]{'p', 'a', 's', 's'};
+    CharSequence password = "pass";
 
     createRequest.setUserName(userName);
     createRequest.setPassword(password);
@@ -68,17 +78,19 @@ class UserCreateRequestTest
     when(userByLoginFinder.find(userName)).thenReturn(Optional.of(user));
 
     Exception exception = assertThrows(UserWithLoginAlreadyExistsException.class,
-      () -> createRequest.create(userByLoginFinder));
+      () -> createRequest.create(userByLoginFinder, passwordEncoder));
 
     assertEquals("User with login '" + userName + "' already exists", exception.getMessage());
+
+    verify(userByLoginFinder, times(1)).find(userName);
   }
 
   @Test
   void testCreateDifferentPassword()
   {
     String userName = "userName";
-    char[] password = new char[]{'p', 'a', 's', 's'};
-    char[] repeatedPassword = new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'};
+    CharSequence password = "pass";
+    CharSequence repeatedPassword = "repeatedPassword";
 
     createRequest.setUserName(userName);
     createRequest.setPassword(password);
@@ -86,8 +98,11 @@ class UserCreateRequestTest
 
     when(userByLoginFinder.find(userName)).thenReturn(Optional.empty());
 
-    Exception exception = assertThrows(PasswordMismatchException.class, () -> createRequest.create(userByLoginFinder));
+    Exception exception = assertThrows(PasswordMismatchException.class,
+      () -> createRequest.create(userByLoginFinder, passwordEncoder));
 
     assertEquals("Password and repeated password does not match!", exception.getMessage());
+
+    verify(userByLoginFinder, times(1)).find(userName);
   }
 }

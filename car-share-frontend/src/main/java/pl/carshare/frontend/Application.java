@@ -29,6 +29,8 @@ public class Application implements CommandLineRunner
   public void run(String... args) throws Exception {
     UserCreateRequest request = new UserCreateRequest();
     request.setUserName("ja1n");
+    request.setPassword("ja1n");
+    request.setRepeatedPassword("ja1n");
     userService.create(request);
   }
 }

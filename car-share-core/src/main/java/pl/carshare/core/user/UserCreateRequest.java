@@ -1,9 +1,9 @@
 package pl.carshare.core.user;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @author leonzio
@@ -12,24 +12,25 @@ import lombok.Setter;
 public class UserCreateRequest
 {
   private String userName;
-  private char[] password;
-  private char[] repeatedPassword;
+  private CharSequence password;
+  private CharSequence repeatedPassword;
 
-  User create(UserByLoginFinder userByLoginFinder) throws UserWithLoginAlreadyExistsException, PasswordMismatchException
+  User create(UserByLoginFinder userByLoginFinder, PasswordEncoder passwordEncoder) throws
+    UserWithLoginAlreadyExistsException, PasswordMismatchException
   {
     if (userByLoginFinder.find(userName).isPresent())
     {
       throw UserWithLoginAlreadyExistsException.of(userName);
     }
 
-    if (!Arrays.equals(password, repeatedPassword))
+    if (!password.equals(repeatedPassword))
     {
       throw new PasswordMismatchException();
     }
 
     User user = new User();
     user.setUserName(userName);
-    user.setPassword(Arrays.toString(password));
+    user.setPassword(passwordEncoder.encode(password));
     return user;
   }
 

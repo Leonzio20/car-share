@@ -1,11 +1,16 @@
 package pl.carshare.core.user;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -40,7 +45,7 @@ class UserServiceImplTest
   void testCreateSuccess()
   {
     String userName = "newUser";
-    char[] password = { 'p', 'a', 's', 's' };
+    CharSequence password = "pass";
 
     UserCreateRequest request = new UserCreateRequest();
     request.setUserName(userName);
@@ -55,18 +60,18 @@ class UserServiceImplTest
 
     User createdUser = userService.create(request);
 
-    verify(userRepository, times(1)).findByUserName(userName);
-    verify(userRepository, times(1)).save(userArgumentCaptor.capture());
-
     assertNotNull(createdUser);
     assertEquals(createdUser, user);
+
+    verify(userRepository, times(1)).findByUserName(userName);
+    verify(userRepository, times(1)).save(userArgumentCaptor.capture());
   }
 
   @Test
   void testCreateUserWithUserNameExists()
   {
     String userName = "newUser";
-    char[] password = { 'p', 'a', 's', 's' };
+    CharSequence password = "pass";
 
     UserCreateRequest request = new UserCreateRequest();
     request.setUserName(userName);
@@ -74,52 +79,56 @@ class UserServiceImplTest
     request.setRepeatedPassword(password);
 
     User user = mock(User.class);
-    when(userRepository.findByUserName(userName)).thenReturn(Optional.of(user));
+    when(userRepository.findByUserName(same(userName))).thenReturn(Optional.of(user));
 
     Exception exception = assertThrows(UserWithLoginAlreadyExistsException.class, () -> userService.create(request));
 
-    verify(userRepository, times(1)).findByUserName(userName);
-
     assertEquals("User with login '" + userName + "' already exists", exception.getMessage());
+
+    verify(userRepository, times(1)).findByUserName(userName);
   }
 
   @Test
   void testLoginSuccess()
   {
     String userName = "userName";
-    char[] password = new char[]{ 'p', 'a', 's', 's' };
+    CharSequence password = "pass";
 
     UserLoginRequest request = new UserLoginRequest();
     request.setUserName(userName);
     request.setPassword(password);
 
+    ArgumentCaptor<String> encodedPasswordCaptor = ArgumentCaptor.forClass(String.class);
     User user = mock(User.class);
-    when(userRepository.findByUserNameAndPassword(userName, Arrays.toString(password))).thenReturn(Optional.of(user));
+    when(userRepository.findByUserNameAndPassword(same(userName), encodedPasswordCaptor.capture())).thenReturn(
+      Optional.of(user));
 
     boolean loginResult = userService.login(request);
 
-    verify(userRepository, times(1)).findByUserNameAndPassword(userName, Arrays.toString(password));
-
     assertTrue(loginResult);
+
+    verify(userRepository, times(1)).findByUserNameAndPassword(userName, encodedPasswordCaptor.getValue());
   }
 
   @Test
   void testLoginFails()
   {
     String userName = "userName";
-    char[] password = new char[]{ 'p', 'a', 's', 's' };
+    CharSequence password = "pass";
 
     UserLoginRequest request = new UserLoginRequest();
     request.setUserName(userName);
     request.setPassword(password);
 
-    when(userRepository.findByUserNameAndPassword(userName, Arrays.toString(password))).thenReturn(Optional.empty());
+    ArgumentCaptor<String> encodedPasswordCaptor = ArgumentCaptor.forClass(String.class);
+    when(userRepository.findByUserNameAndPassword(same(userName), encodedPasswordCaptor.capture())).thenReturn(
+      Optional.empty());
 
     Exception exception = assertThrows(InvalidUserNameOrPasswordException.class, () -> userService.login(request));
 
-    verify(userRepository, times(1)).findByUserNameAndPassword(userName, Arrays.toString(password));
-
     assertEquals("Invalid user name or password", exception.getMessage());
+
+    verify(userRepository, times(1)).findByUserNameAndPassword(userName, encodedPasswordCaptor.getValue());
   }
 
 }
