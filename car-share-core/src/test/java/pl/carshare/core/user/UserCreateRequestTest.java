@@ -27,7 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 class UserCreateRequestTest
 {
   @Mock
-  private UserCreateRequest.UserByLoginFinder userByLoginFinder;
+  private UserCreateRequest.UserByUserNameFinder userByUserNameFinder;
 
   @Mock
   private PasswordEncoder passwordEncoder;
@@ -51,16 +51,16 @@ class UserCreateRequestTest
     createRequest.setPassword(password);
     createRequest.setRepeatedPassword(password);
 
-    when(userByLoginFinder.find(userName)).thenReturn(Optional.empty());
+    when(userByUserNameFinder.find(userName)).thenReturn(Optional.empty());
     when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 
-    User createdUser = createRequest.create(userByLoginFinder, passwordEncoder);
+    User createdUser = createRequest.create(userByUserNameFinder, passwordEncoder);
 
     assertNotNull(createdUser);
     assertEquals(userName, createdUser.getUserName());
     assertEquals(encodedPassword, createdUser.getPassword());
 
-    verify(userByLoginFinder, times(1)).find(userName);
+    verify(userByUserNameFinder, times(1)).find(userName);
     verify(passwordEncoder, times(1)).encode(password);
   }
 
@@ -75,14 +75,14 @@ class UserCreateRequestTest
     createRequest.setRepeatedPassword(password);
 
     User user = mock(User.class);
-    when(userByLoginFinder.find(userName)).thenReturn(Optional.of(user));
+    when(userByUserNameFinder.find(userName)).thenReturn(Optional.of(user));
 
     Exception exception = assertThrows(UserWithLoginAlreadyExistsException.class,
-      () -> createRequest.create(userByLoginFinder, passwordEncoder));
+      () -> createRequest.create(userByUserNameFinder, passwordEncoder));
 
     assertEquals("User with login '" + userName + "' already exists", exception.getMessage());
 
-    verify(userByLoginFinder, times(1)).find(userName);
+    verify(userByUserNameFinder, times(1)).find(userName);
   }
 
   @Test
@@ -96,13 +96,13 @@ class UserCreateRequestTest
     createRequest.setPassword(password);
     createRequest.setRepeatedPassword(repeatedPassword);
 
-    when(userByLoginFinder.find(userName)).thenReturn(Optional.empty());
+    when(userByUserNameFinder.find(userName)).thenReturn(Optional.empty());
 
     Exception exception = assertThrows(PasswordMismatchException.class,
-      () -> createRequest.create(userByLoginFinder, passwordEncoder));
+      () -> createRequest.create(userByUserNameFinder, passwordEncoder));
 
     assertEquals("Password and repeated password does not match!", exception.getMessage());
 
-    verify(userByLoginFinder, times(1)).find(userName);
+    verify(userByUserNameFinder, times(1)).find(userName);
   }
 }

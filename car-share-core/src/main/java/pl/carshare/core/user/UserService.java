@@ -8,4 +8,6 @@ public interface UserService
   User create(UserCreateRequest request) throws UserWithLoginAlreadyExistsException, PasswordMismatchException;
 
   boolean login(UserLoginRequest request) throws InvalidUserNameOrPasswordException;
+
+  User getById(Long id) throws NoSuchUserException;
 }

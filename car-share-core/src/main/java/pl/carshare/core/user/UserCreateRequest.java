@@ -15,10 +15,10 @@ public class UserCreateRequest
   private CharSequence password;
   private CharSequence repeatedPassword;
 
-  User create(UserByLoginFinder userByLoginFinder, PasswordEncoder passwordEncoder) throws
+  User create(UserByUserNameFinder userByUserNameFinder, PasswordEncoder passwordEncoder) throws
     UserWithLoginAlreadyExistsException, PasswordMismatchException
   {
-    if (userByLoginFinder.find(userName).isPresent())
+    if (userByUserNameFinder.find(userName).isPresent())
     {
       throw UserWithLoginAlreadyExistsException.of(userName);
     }
@@ -35,7 +35,7 @@ public class UserCreateRequest
   }
 
   @FunctionalInterface
-  interface UserByLoginFinder
+  interface UserByUserNameFinder
   {
     Optional<User> find(String userName);
   }
