@@ -1,7 +1,9 @@
 package pl.carshare.core.user;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import javax.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,12 +35,12 @@ class UserCreateRequestTest
   @Mock
   private PasswordEncoder passwordEncoder;
 
-  private UserCreateRequest createRequest;
+  private UserCreateRequest request;
 
   @BeforeEach
   void setUp()
   {
-    createRequest = new UserCreateRequest();
+    request = new UserCreateRequest();
   }
 
   @Test
@@ -47,14 +50,14 @@ class UserCreateRequestTest
     CharSequence password = "pass";
     String encodedPassword = "encoded";
 
-    createRequest.setUserName(userName);
-    createRequest.setPassword(password);
-    createRequest.setRepeatedPassword(password);
+    request.setUserName(userName);
+    request.setPassword(password);
+    request.setRepeatedPassword(password);
 
     when(userByUserNameFinder.find(userName)).thenReturn(Optional.empty());
     when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
 
-    User createdUser = createRequest.create(userByUserNameFinder, passwordEncoder);
+    User createdUser = request.create(userByUserNameFinder, passwordEncoder);
 
     assertNotNull(createdUser);
     assertEquals(userName, createdUser.getUserName());
@@ -70,15 +73,15 @@ class UserCreateRequestTest
     String userName = "userName";
     CharSequence password = "pass";
 
-    createRequest.setUserName(userName);
-    createRequest.setPassword(password);
-    createRequest.setRepeatedPassword(password);
+    request.setUserName(userName);
+    request.setPassword(password);
+    request.setRepeatedPassword(password);
 
     User user = mock(User.class);
     when(userByUserNameFinder.find(userName)).thenReturn(Optional.of(user));
 
     Exception exception = assertThrows(UserWithLoginAlreadyExistsException.class,
-      () -> createRequest.create(userByUserNameFinder, passwordEncoder));
+      () -> request.create(userByUserNameFinder, passwordEncoder));
 
     assertEquals("User with login '" + userName + "' already exists", exception.getMessage());
 
@@ -92,17 +95,29 @@ class UserCreateRequestTest
     CharSequence password = "pass";
     CharSequence repeatedPassword = "repeatedPassword";
 
-    createRequest.setUserName(userName);
-    createRequest.setPassword(password);
-    createRequest.setRepeatedPassword(repeatedPassword);
+    request.setUserName(userName);
+    request.setPassword(password);
+    request.setRepeatedPassword(repeatedPassword);
 
     when(userByUserNameFinder.find(userName)).thenReturn(Optional.empty());
 
     Exception exception = assertThrows(PasswordMismatchException.class,
-      () -> createRequest.create(userByUserNameFinder, passwordEncoder));
+      () -> request.create(userByUserNameFinder, passwordEncoder));
 
     assertEquals("Password and repeated password does not match!", exception.getMessage());
 
     verify(userByUserNameFinder, times(1)).find(userName);
+  }
+
+  @Test
+  void testCreateValidationFails()
+  {
+    Exception exception = assertThrows(ConstraintViolationException.class,
+      () -> request.create(userByUserNameFinder, passwordEncoder));
+
+    String exceptionMessage = exception.getMessage();
+    assertThat(exceptionMessage, containsString("repeatedPassword: must not be null"));
+    assertThat(exceptionMessage, containsString("userName: must not be null"));
+    assertThat(exceptionMessage, containsString("password: must not be null"));
   }
 }

@@ -2,23 +2,30 @@ package pl.carshare.core.user;
 
 import java.util.Optional;
 
+import javax.validation.constraints.NotNull;
 import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
+import pl.carshare.core.bean.BeanValidation;
 
 /**
  * @author leonzio
  */
 @Setter
+@Validated
 public class UserCreateRequest
 {
-  private String userName;
-  private CharSequence password;
-  private CharSequence repeatedPassword;
+  private @NotNull String userName;
+  private @NotNull CharSequence password;
+  private @NotNull CharSequence repeatedPassword;
 
   User create(UserByUserNameFinder userByUserNameFinder, PasswordEncoder passwordEncoder) throws
     UserWithLoginAlreadyExistsException, PasswordMismatchException
   {
-    if (userByUserNameFinder.find(userName).isPresent())
+    BeanValidation.validate(this);
+
+    if (userByUserNameFinder.find(userName)
+      .isPresent())
     {
       throw UserWithLoginAlreadyExistsException.of(userName);
     }

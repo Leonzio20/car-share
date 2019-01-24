@@ -24,13 +24,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import pl.carshare.core.TestConfiguration;
+import pl.carshare.core.ApplicationConfig;
 
 /**
  * @author leonzio
  */
 @ExtendWith({ SpringExtension.class, MockitoExtension.class })
-@ContextConfiguration(classes = { TestConfiguration.class })
+@ContextConfiguration(classes = { ApplicationConfig.class })
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 class UserServiceImplTest
@@ -61,10 +61,10 @@ class UserServiceImplTest
     User createdUser = userService.create(request);
 
     assertNotNull(createdUser);
-    assertEquals(createdUser, user);
+    assertEquals(user, createdUser);
 
     verify(userRepository, times(1)).findByUserName(userName);
-    verify(userRepository, times(1)).save(userArgumentCaptor.capture());
+    verify(userRepository, times(1)).save(userArgumentCaptor.getValue());
   }
 
   @Test
@@ -131,4 +131,32 @@ class UserServiceImplTest
     verify(userRepository, times(1)).findByUserNameAndPassword(userName, encodedPasswordCaptor.getValue());
   }
 
+  @Test
+  void testGetByIdSuccess()
+  {
+    Long userId = -9456L;
+
+    User user = mock(User.class);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+    User returnedUser = userService.getById(userId);
+
+    assertEquals(user, returnedUser);
+
+    verify(userRepository, times(1)).findById(userId);
+  }
+
+  @Test
+  void testGetByIdFails()
+  {
+    Long userId = -9456L;
+
+    when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+    Exception exception = assertThrows(NoSuchUserException.class, () -> userService.getById(userId));
+    assertEquals("No user with id: " + userId + " found.", exception.getMessage());
+
+    verify(userRepository, times(1)).findById(userId);
+  }
 }
