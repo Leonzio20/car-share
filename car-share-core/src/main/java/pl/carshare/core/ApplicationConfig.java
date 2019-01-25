@@ -7,7 +7,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -21,11 +23,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableJpaRepositories
 @EntityScan
 @EnableWebSecurity
-public class ApplicationConfig
+public class ApplicationConfig extends WebSecurityConfigurerAdapter
 {
   @Bean
   public PasswordEncoder getPasswordEncoder()
   {
     return new BCryptPasswordEncoder();
+  }
+
+  @Override
+  protected void configure(HttpSecurity http) throws Exception
+  {
+    http.httpBasic().disable();
   }
 }
