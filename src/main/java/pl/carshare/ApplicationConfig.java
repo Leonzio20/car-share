@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -59,38 +60,45 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter implements W
   @Override
   protected void configure(HttpSecurity http) throws Exception
   {
-    //    http.csrf()
-    //      .requireCsrfProtectionMatcher(new AntPathRequestMatcher("**/login"))
-    //      .and()
-    //      .authorizeRequests()
-    //      .antMatchers("/dashboard")
-    //      .hasRole("USER")
-    //      .and()
-    //      .formLogin()
-    //      .loginPage("/login")
-    //      .defaultSuccessUrl("/dashboard")
-    //      .and()
-    //      .logout()
-    //      .permitAll();
-    http.httpBasic()
-      .and()
-      .authorizeRequests()
-      .antMatchers("**/login")
-      .anonymous()
-      .and()
-      .formLogin()
-      .loginPage("/login")
-      .defaultSuccessUrl("/dashboard")
+    http.csrf()
+      .requireCsrfProtectionMatcher(new AntPathRequestMatcher("**/login"))
       .and()
       .authorizeRequests()
       .antMatchers("/dashboard")
-      .authenticated();
+      .hasRole("USER")
+      .and()
+      .formLogin()
+      .defaultSuccessUrl("/dashboard")
+      .loginPage("/login")
+      .and()
+      .logout()
+      .permitAll();
+    //      .and()
+    //      .logout()
+    //      .permitAll()
+    //      .and()
+    //      .formLogin()
+    //      .loginPage("/login")
+    //      .loginProcessingUrl("/login")
+    //      .defaultSuccessUrl("/dashboard")
+    //      .successHandler(myAuthenticationSuccessHandler());
+    //    http.authorizeRequests()
+    //      .antMatchers("/login*")
+    //      .permitAll()
+    //      .anyRequest()
+    //      .authenticated()
+    //      .and()
+    //      .formLogin()
+    //      .loginPage("/login")
+    //      .defaultSuccessUrl("/dashboard");
   }
 
   @Override
   public void addResourceHandlers(final ResourceHandlerRegistry registry)
   {
-    registry.addResourceHandler("/*.js/**", "/*.css/**")
+    registry.addResourceHandler("/*.js/**")
+      .addResourceLocations("/ui/jsp/");
+    registry.addResourceHandler("/*.css/**")
       .addResourceLocations("/ui/static/");
   }
 
@@ -101,6 +109,8 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter implements W
       .setViewName("login");
     registry.addViewController("/login")
       .setViewName("login");
+    registry.addViewController("/dashboard")
+      .setViewName("dashboard");
   }
 
   @Bean

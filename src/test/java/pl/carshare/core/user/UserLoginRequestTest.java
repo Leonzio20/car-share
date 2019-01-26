@@ -53,17 +53,40 @@ class UserLoginRequestTest
 
     User user = mock(User.class);
 
-    when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
     when(userByUserNameFinder.find(userName)).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
 
     request.login(userByUserNameFinder, passwordEncoder);
 
-    verify(passwordEncoder, times(1)).matches(password, user.getPassword());
     verify(userByUserNameFinder, times(1)).find(userName);
+    verify(passwordEncoder, times(1)).matches(password, user.getPassword());
   }
 
   @Test
-  void testLoginFails()
+  void testLoginFailsIncorrectPassword()
+  {
+    String userName = "user";
+    CharSequence password = "pass";
+
+    request.setUserName(userName);
+    request.setPassword(password);
+
+    User user = mock(User.class);
+
+    when(userByUserNameFinder.find(userName)).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(password, user.getPassword())).thenReturn(false);
+
+    Exception exception = assertThrows(InvalidUserNameOrPasswordException.class,
+      () -> request.login(userByUserNameFinder, passwordEncoder));
+
+    assertEquals("Invalid user name or password", exception.getMessage());
+
+    verify(userByUserNameFinder, times(1)).find(userName);
+    verify(passwordEncoder, times(1)).matches(password, user.getPassword());
+  }
+
+  @Test
+  void testLoginFailsNoUser()
   {
     String userName = "user";
     CharSequence password = "pass";

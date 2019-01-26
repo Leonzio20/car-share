@@ -1,10 +1,13 @@
 package pl.carshare.core;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import pl.carshare.core.user.UserLoginRequest;
 import pl.carshare.core.user.UserService;
@@ -29,7 +32,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider
     request.setPassword(password);
 
     userService.login(request);
-    return new UsernamePasswordAuthenticationToken(userName, password);
+    return new UsernamePasswordAuthenticationToken(userName, password,
+      Collections.singletonList((GrantedAuthority) () -> "ROLE_USER"));
   }
 
   @Override

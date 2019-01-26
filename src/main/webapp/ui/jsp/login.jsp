@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container" style="margin:50px">
-    <h3>Spring Security Login Example</h3>
+    <h3>Car-Share</h3>
     <c:if test="${param.error ne null}">
         <div style="color: red">Invalid credentials.</div>
     </c:if>

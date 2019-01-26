@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import pl.carshare.ApplicationConfig;
@@ -36,6 +37,9 @@ class UserServiceImplTest
 {
   @MockBean
   private UserRepository userRepository;
+
+  @MockBean
+  private PasswordEncoder passwordEncoder;
 
   @Autowired
   private UserServiceImpl userService;
@@ -100,6 +104,7 @@ class UserServiceImplTest
     User user = mock(User.class);
     when(userRepository.findByUserName(same(userName))).thenReturn(Optional.of(user));
     when(user.getPassword()).thenReturn(password.toString());
+    when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
 
     userService.login(request);
 
