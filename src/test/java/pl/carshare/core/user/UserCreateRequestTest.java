@@ -30,7 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 class UserCreateRequestTest
 {
   @Mock
-  private UserCreateRequest.UserByUserNameFinder userByUserNameFinder;
+  private UserByUserNameFinder userByUserNameFinder;
 
   @Mock
   private PasswordEncoder passwordEncoder;

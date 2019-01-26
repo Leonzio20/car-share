@@ -55,9 +55,15 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <!--<scope>provided</scope>-->
     </dependency>
 
     <dependency>
@@ -191,11 +197,11 @@
                 <!--Full coverage-->
                 <rule implementation="org.jacoco.maven.RuleConfiguration">
                   <element>PACKAGE</element>
-                  <excludes>
-                    <exclude>pl.carshare.frontend</exclude>
-                    <exclude>pl.carshare.core</exclude>
-                    <exclude>pl.carshare.core.bean</exclude>
-                  </excludes>
+                  <includes>
+                    <include>pl.carshare.core.passage</include>
+                    <include>pl.carshare.core.reservation</include>
+                    <include>pl.carshare.core.user</include>
+                  </includes>
                   <limits>
                     <limit implementation="org.jacoco.report.check.Limit">
                       <counter>INSTRUCTION</counter>

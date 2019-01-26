@@ -26,9 +26,9 @@ public class UserServiceImpl implements UserService
   }
 
   @Override
-  public boolean login(UserLoginRequest request) throws InvalidUserNameOrPasswordException
+  public void login(UserLoginRequest request) throws InvalidUserNameOrPasswordException
   {
-    return request.login(userRepository::findByUserNameAndPassword, passwordEncoder);
+    request.login(userRepository::findByUserName, passwordEncoder);
   }
 
   @Override

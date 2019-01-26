@@ -3,7 +3,6 @@ package pl.carshare.core.user;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -24,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import pl.carshare.core.ApplicationConfig;
+import pl.carshare.ApplicationConfig;
 
 /**
  * @author leonzio
@@ -98,16 +97,13 @@ class UserServiceImplTest
     request.setUserName(userName);
     request.setPassword(password);
 
-    ArgumentCaptor<String> encodedPasswordCaptor = ArgumentCaptor.forClass(String.class);
     User user = mock(User.class);
-    when(userRepository.findByUserNameAndPassword(same(userName), encodedPasswordCaptor.capture())).thenReturn(
-      Optional.of(user));
+    when(userRepository.findByUserName(same(userName))).thenReturn(Optional.of(user));
+    when(user.getPassword()).thenReturn(password.toString());
 
-    boolean loginResult = userService.login(request);
+    userService.login(request);
 
-    assertTrue(loginResult);
-
-    verify(userRepository, times(1)).findByUserNameAndPassword(userName, encodedPasswordCaptor.getValue());
+    verify(userRepository, times(1)).findByUserName(userName);
   }
 
   @Test
@@ -120,15 +116,13 @@ class UserServiceImplTest
     request.setUserName(userName);
     request.setPassword(password);
 
-    ArgumentCaptor<String> encodedPasswordCaptor = ArgumentCaptor.forClass(String.class);
-    when(userRepository.findByUserNameAndPassword(same(userName), encodedPasswordCaptor.capture())).thenReturn(
-      Optional.empty());
+    when(userRepository.findByUserName(userName)).thenReturn(Optional.empty());
 
     Exception exception = assertThrows(InvalidUserNameOrPasswordException.class, () -> userService.login(request));
 
     assertEquals("Invalid user name or password", exception.getMessage());
 
-    verify(userRepository, times(1)).findByUserNameAndPassword(userName, encodedPasswordCaptor.getValue());
+    verify(userRepository, times(1)).findByUserName(userName);
   }
 
   @Test

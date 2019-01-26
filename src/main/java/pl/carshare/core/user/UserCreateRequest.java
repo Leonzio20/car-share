@@ -1,7 +1,5 @@
 package pl.carshare.core.user;
 
-import java.util.Optional;
-
 import javax.validation.constraints.NotNull;
 import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,9 +39,4 @@ public class UserCreateRequest
     return user;
   }
 
-  @FunctionalInterface
-  interface UserByUserNameFinder
-  {
-    Optional<User> find(String userName);
-  }
 }

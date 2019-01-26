@@ -1,7 +1,5 @@
 package pl.carshare.core.user;
 
-import java.util.Optional;
-
 import javax.validation.constraints.NotNull;
 import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,18 +16,16 @@ public class UserLoginRequest
   private @NotNull String userName;
   private @NotNull CharSequence password;
 
-  boolean login(UserByUserNameAndPasswordFinder userByUserNameAndPasswordFinder, PasswordEncoder passwordEncoder) throws
+  void login(UserByUserNameFinder userByUserNameAndPasswordFinder, PasswordEncoder passwordEncoder) throws
     InvalidUserNameOrPasswordException
   {
     BeanValidation.validate(this);
 
-    return userByUserNameAndPasswordFinder.find(userName, passwordEncoder.encode(password))
-      .map(user -> true)
+    User foundUser = userByUserNameAndPasswordFinder.find(userName)
       .orElseThrow(InvalidUserNameOrPasswordException::new);
-  }
-
-  interface UserByUserNameAndPasswordFinder
-  {
-    Optional<User> find(String userName, String password);
+    if (!passwordEncoder.matches(password, foundUser.getPassword()))
+    {
+      throw new InvalidUserNameOrPasswordException();
+    }
   }
 }

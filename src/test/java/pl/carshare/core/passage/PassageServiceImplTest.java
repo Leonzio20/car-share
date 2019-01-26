@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import pl.carshare.core.ApplicationConfig;
+import pl.carshare.ApplicationConfig;
 import pl.carshare.core.user.User;
 import pl.carshare.core.user.UserService;
 

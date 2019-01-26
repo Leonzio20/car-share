@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,7 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 class UserLoginRequestTest
 {
   @Mock
-  private UserLoginRequest.UserByUserNameAndPasswordFinder userByUserNameAndPasswordFinder;
+  private UserByUserNameFinder userByUserNameFinder;
 
   @Mock
   private PasswordEncoder passwordEncoder;
@@ -48,22 +47,19 @@ class UserLoginRequestTest
   {
     String userName = "user";
     CharSequence password = "pass";
-    String encodedPassword = "encoded";
 
     request.setUserName(userName);
     request.setPassword(password);
 
     User user = mock(User.class);
 
-    when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-    when(userByUserNameAndPasswordFinder.find(userName, encodedPassword)).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
+    when(userByUserNameFinder.find(userName)).thenReturn(Optional.of(user));
 
-    boolean loginResult = request.login(userByUserNameAndPasswordFinder, passwordEncoder);
+    request.login(userByUserNameFinder, passwordEncoder);
 
-    assertTrue(loginResult);
-
-    verify(passwordEncoder, times(1)).encode(password);
-    verify(userByUserNameAndPasswordFinder, times(1)).find(userName, encodedPassword);
+    verify(passwordEncoder, times(1)).matches(password, user.getPassword());
+    verify(userByUserNameFinder, times(1)).find(userName);
   }
 
   @Test
@@ -71,28 +67,25 @@ class UserLoginRequestTest
   {
     String userName = "user";
     CharSequence password = "pass";
-    String encodedPassword = "encoded";
 
     request.setUserName(userName);
     request.setPassword(password);
 
-    when(passwordEncoder.encode(password)).thenReturn(encodedPassword);
-    when(userByUserNameAndPasswordFinder.find(userName, encodedPassword)).thenReturn(Optional.empty());
+    when(userByUserNameFinder.find(userName)).thenReturn(Optional.empty());
 
     Exception exception = assertThrows(InvalidUserNameOrPasswordException.class,
-      () -> request.login(userByUserNameAndPasswordFinder, passwordEncoder));
+      () -> request.login(userByUserNameFinder, passwordEncoder));
 
     assertEquals("Invalid user name or password", exception.getMessage());
 
-    verify(passwordEncoder, times(1)).encode(password);
-    verify(userByUserNameAndPasswordFinder, times(1)).find(userName, encodedPassword);
+    verify(userByUserNameFinder, times(1)).find(userName);
   }
 
   @Test
   void testLoginValidationFails()
   {
     Exception exception = assertThrows(ConstraintViolationException.class,
-      () -> request.login(userByUserNameAndPasswordFinder, passwordEncoder));
+      () -> request.login(userByUserNameFinder, passwordEncoder));
 
     String exceptionMessage = exception.getMessage();
     assertThat(exceptionMessage, containsString("userName: must not be null"));
