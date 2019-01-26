@@ -7,7 +7,7 @@
     <script src="/bootstrap.min.js"></script>
 </head>
 <body>
-<div class="container" style="margin:50px">
+<div class="container" style="width: 400px; vertical-align: middle; margin-top: 50px;">
     <h3>Car-Share</h3>
     <c:if test="${param.error ne null}">
         <div style="color: red">Invalid credentials.</div>
@@ -15,13 +15,13 @@
     <form action="/login" method="post">
         <div class="form-group">
             <label for="username">UserName:</label>
-            <input type="text" class="form-control" id="username" name="username">
+            <input type="text" class="form-control" id="username" name="username" required>
         </div>
         <div class="form-group">
             <label for="pwd">Password:</label>
-            <input type="password" class="form-control" id="pwd" name="password">
+            <input type="password" class="form-control" id="pwd" name="password" required>
         </div>
-        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="submit" class="btn btn-success">Log-in</button>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
 </div>

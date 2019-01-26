@@ -4,11 +4,13 @@ import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+import pl.carshare.core.user.InvalidUserNameOrPasswordException;
 import pl.carshare.core.user.UserLoginRequest;
 import pl.carshare.core.user.UserService;
 
@@ -31,7 +33,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider
     request.setUserName(userName);
     request.setPassword(password);
 
-    userService.login(request);
+    try
+    {
+      userService.login(request);
+    }
+    catch (InvalidUserNameOrPasswordException exc)
+    {
+      throw new BadCredentialsException("Invalid", exc);
+    }
+
     return new UsernamePasswordAuthenticationToken(userName, password,
       Collections.singletonList((GrantedAuthority) () -> "ROLE_USER"));
   }

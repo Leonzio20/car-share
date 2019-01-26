@@ -96,9 +96,7 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter implements W
   @Override
   public void addResourceHandlers(final ResourceHandlerRegistry registry)
   {
-    registry.addResourceHandler("/*.js/**")
-      .addResourceLocations("/ui/jsp/");
-    registry.addResourceHandler("/*.css/**")
+    registry.addResourceHandler("/*.js/**", "/*.css/**")
       .addResourceLocations("/ui/static/");
   }
 
