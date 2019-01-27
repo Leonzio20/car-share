@@ -24,9 +24,6 @@ import pl.carshare.core.passage.PassageService;
 import pl.carshare.core.user.User;
 import pl.carshare.core.user.UserService;
 
-/**
- * @author leonzio
- */
 @ExtendWith({ SpringExtension.class, MockitoExtension.class })
 @ContextConfiguration(classes = { ApplicationConfig.class })
 @RunWith(MockitoJUnitRunner.class)

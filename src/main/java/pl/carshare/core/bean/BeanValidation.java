@@ -7,9 +7,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-/**
- * @author leonzio
- */
 public final class BeanValidation
 {
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory()

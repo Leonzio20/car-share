@@ -9,9 +9,6 @@ import pl.carshare.core.passage.Passage;
 import pl.carshare.core.user.User;
 import pl.carshare.core.user.UserByIdGetter;
 
-/**
- * @author leonzio
- */
 @Setter
 @Validated
 public class ReservationCreateRequest

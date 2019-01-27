@@ -6,9 +6,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import pl.carshare.core.bean.BeanValidation;
 
-/**
- * @author leonzio
- */
 @Setter
 @Validated
 public class UserCreateRequest

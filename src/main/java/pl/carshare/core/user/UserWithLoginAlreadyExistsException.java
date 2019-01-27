@@ -1,8 +1,5 @@
 package pl.carshare.core.user;
 
-/**
- * @author leonzio
- */
 public class UserWithLoginAlreadyExistsException extends RuntimeException
 {
   private UserWithLoginAlreadyExistsException(String message)

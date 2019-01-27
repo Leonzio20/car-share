@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.carshare.core.user.UserService;
 
-/**
- * @author leonzio
- */
 @Service("passageService")
 @Transactional
 public class PassageServiceImpl implements PassageService

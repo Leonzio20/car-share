@@ -26,9 +26,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import pl.carshare.ApplicationConfig;
 
-/**
- * @author leonzio
- */
 @ExtendWith({ SpringExtension.class, MockitoExtension.class })
 @ContextConfiguration(classes = { ApplicationConfig.class })
 @RunWith(MockitoJUnitRunner.class)

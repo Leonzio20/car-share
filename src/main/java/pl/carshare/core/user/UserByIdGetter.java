@@ -1,8 +1,5 @@
 package pl.carshare.core.user;
 
-/**
- * @author leonzio
- */
 @FunctionalInterface
 public interface UserByIdGetter
 {

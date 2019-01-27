@@ -6,9 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.carshare.core.passage.PassageService;
 import pl.carshare.core.user.UserService;
 
-/**
- * @author leonzio
- */
 @Service("reservationService")
 @Transactional
 public class ReservationServiceImpl implements ReservationService

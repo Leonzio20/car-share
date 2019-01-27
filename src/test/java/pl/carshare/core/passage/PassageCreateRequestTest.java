@@ -22,9 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.carshare.core.user.User;
 import pl.carshare.core.user.UserByIdGetter;
 
-/**
- * @author leonzio
- */
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
 class PassageCreateRequestTest

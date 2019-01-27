@@ -21,9 +21,6 @@ import lombok.Getter;
 import lombok.Setter;
 import pl.carshare.core.user.User;
 
-/**
- * @author leonzio
- */
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode

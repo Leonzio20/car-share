@@ -12,7 +12,7 @@
     <c:if test="${param.error ne null}">
         <div style="color: red">Invalid credentials.</div>
     </c:if>
-    <form action="/login" method="post">
+    <form action="/register" method="post">
         <div class="form-group">
             <label for="username">UserName:</label>
             <input type="text" class="form-control" id="username" name="username" required>
@@ -21,8 +21,11 @@
             <label for="pwd">Password:</label>
             <input type="password" class="form-control" id="pwd" name="password" required>
         </div>
-        <button type="submit" class="btn btn-success">Log-in</button>
-        <a href="/register" about="">Register</a>
+        <div class="form-group">
+            <label for="rpwd">Repeated password:</label>
+            <input type="password" class="form-control" id="rpwd" name="rpassword" required>
+        </div>
+        <button type="submit" class="btn btn-success">Register</button>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
 </div>

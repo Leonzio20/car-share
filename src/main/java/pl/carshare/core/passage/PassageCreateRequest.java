@@ -5,17 +5,16 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 import pl.carshare.core.bean.BeanValidation;
 import pl.carshare.core.user.User;
 import pl.carshare.core.user.UserByIdGetter;
 
-/**
- * @author leonzio
- */
 @Setter
 @Validated
+@XmlRootElement
 public class PassageCreateRequest
 {
   private @NotNull Long userId;

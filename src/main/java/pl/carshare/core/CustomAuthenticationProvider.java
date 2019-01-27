@@ -14,11 +14,8 @@ import pl.carshare.core.user.InvalidUserNameOrPasswordException;
 import pl.carshare.core.user.UserLoginRequest;
 import pl.carshare.core.user.UserService;
 
-/**
- * @author leonzio
- */
 @Component
-public class CustomAuthenticationProvider implements AuthenticationProvider
+public final class CustomAuthenticationProvider implements AuthenticationProvider
 {
   @Autowired
   private UserService userService;
@@ -39,7 +36,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider
     }
     catch (InvalidUserNameOrPasswordException exc)
     {
-      throw new BadCredentialsException("Invalid", exc);
+      throw new BadCredentialsException(exc.getMessage(), exc);
     }
 
     return new UsernamePasswordAuthenticationToken(userName, password,

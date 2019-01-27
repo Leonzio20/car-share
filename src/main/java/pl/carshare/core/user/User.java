@@ -14,9 +14,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * @author radziejoski
- **/
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode

@@ -23,9 +23,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import pl.carshare.core.CustomAuthenticationProvider;
 
-/**
- * @author leonzio
- */
 @Configuration
 @EnableJpaAuditing
 @EnableAutoConfiguration
@@ -64,7 +61,7 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter implements W
       .requireCsrfProtectionMatcher(new AntPathRequestMatcher("**/login"))
       .and()
       .authorizeRequests()
-      .antMatchers("/dashboard")
+      .antMatchers("/passage", "/dashboard")
       .hasRole("USER")
       .and()
       .formLogin()
@@ -73,24 +70,6 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter implements W
       .and()
       .logout()
       .permitAll();
-    //      .and()
-    //      .logout()
-    //      .permitAll()
-    //      .and()
-    //      .formLogin()
-    //      .loginPage("/login")
-    //      .loginProcessingUrl("/login")
-    //      .defaultSuccessUrl("/dashboard")
-    //      .successHandler(myAuthenticationSuccessHandler());
-    //    http.authorizeRequests()
-    //      .antMatchers("/login*")
-    //      .permitAll()
-    //      .anyRequest()
-    //      .authenticated()
-    //      .and()
-    //      .formLogin()
-    //      .loginPage("/login")
-    //      .defaultSuccessUrl("/dashboard");
   }
 
   @Override
@@ -107,8 +86,12 @@ public class ApplicationConfig extends WebSecurityConfigurerAdapter implements W
       .setViewName("login");
     registry.addViewController("/login")
       .setViewName("login");
+    registry.addViewController("/register")
+      .setViewName("register");
     registry.addViewController("/dashboard")
       .setViewName("dashboard");
+    registry.addViewController("/passage")
+      .setViewName("passage");
   }
 
   @Bean
